@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import store from "./redux/store";
-import { bugAdded, bugRemoved } from "./redux/actions";
+import { bugAdded, bugRemoved, changeFilter } from "./redux/actionCreators";
+import { visibilityFilters } from "./redux/actionTypes";
 import { icons } from "./icons";
 import Getlist from "./GetList";
 import {
@@ -14,20 +15,33 @@ import {
 function App() {
 	const [todo, addTodo] = useState([]);
 
-	store.subscribe(() => addTodo(store.getState()));
+	const filterState = (stateObj) => {
+		switch (stateObj.visibilityFilter) {
+			case visibilityFilters.SHOW_ACTIVE:
+				return stateObj.bugs.filter((bug) => bug.resolved === false);
+
+			case visibilityFilters.SHOW_COMP:
+				return stateObj.bugs.filter((obj) => obj.resolved === true);
+
+			default:
+				return stateObj.bugs;
+		}
+	};
+
+	store.subscribe(() => addTodo(filterState(store.getState())));
 
 	const insertTodo = () =>
 		store.dispatch(bugAdded(document.getElementById("input").value));
 
 	const getAll = () => {
-		addTodo(store.getState());
+		store.dispatch(changeFilter(visibilityFilters.SHOW_ALL));
 	};
 
 	const getActive = () =>
-		addTodo(store.getState().filter((obj) => obj.resolved === false));
+		store.dispatch(changeFilter(visibilityFilters.SHOW_ACTIVE));
 
 	const getCompleted = () =>
-		addTodo(store.getState().filter((obj) => obj.resolved === true));
+		store.dispatch(changeFilter(visibilityFilters.SHOW_COMP));
 
 	const removeSelected = () => {
 		todo.forEach((obj) =>

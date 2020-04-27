@@ -1,11 +1,11 @@
 import React from "react";
 import store from "./redux/store";
-import { bugResolved, bugRemoved } from "./redux/actions";
+import { bugResolved, bugRemoved } from "./redux/actionCreators";
 import { icons } from "./icons";
 import { InputGroup, Button } from "react-bootstrap";
 
 function Getlist(props = {}) {
-	if (props.arr.length === 0) return <p>Add Bugs...</p>;
+	if (props.arr.length === 0) return <i>Add Bugs... Or Change View...</i>;
 	return props.arr.map((obj) => (
 		<InputGroup key={obj.id} style={{ marginTop: "10px" }}>
 			<InputGroup.Prepend>
